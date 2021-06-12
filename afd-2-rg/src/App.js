@@ -21,7 +21,9 @@ function App() {
   const [state,dispatch] = useReducer(reducer,INITIAL_STATE);
 
   const handleInputChange = (value,target) => {
-    dispatch({type:'changeInput', payload:{value,target}})
+    if(value >=1){
+      dispatch({type:'changeInput', payload:{value,target}})
+    }
   }
 
 
