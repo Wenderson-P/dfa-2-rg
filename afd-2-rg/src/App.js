@@ -2,19 +2,41 @@ import './App.css';
 
 import { useReducer } from 'react';
 import React from 'react';
-import { useTable } from 'react-table'
 
 function App() {
   const INITIAL_STATE = {
     states:3,
     symbols:3,
+    columns: ["","",""],
+    rows:["","",""]
   }
 
   const reducer = (state,action) => {
     const {type,payload} = action
+
     switch (type) {
       case "changeInput":
-        return {[payload.target] : payload.value}  
+        const inputValue =  payload.value
+        let fieldToChange = payload.target === 'states' ? 'rows' : 'columns'
+
+        let arraySize = state[fieldToChange].length
+        let auxArray = state[fieldToChange]
+
+        if(inputValue > state[payload.target]){
+          for (inputValue; arraySize <inputValue; arraySize++) {
+            auxArray.push("")
+          }
+        }else{
+          auxArray = state[fieldToChange].filter(
+            (_,index) => index <= inputValue-1)
+        }
+        
+
+        return {
+          ...state,
+          [payload.target] : payload.value,
+          [fieldToChange]: auxArray
+        }
       default:
         break;
     }
@@ -23,63 +45,19 @@ function App() {
   const [state,dispatch] = useReducer(reducer,INITIAL_STATE);
 
   const handleInputChange = (value,target) => {
+    
     if(value >=1){
       dispatch({type:'changeInput', payload:{value,target}})
     }
   }
 
+  const handleTableValuechange = () => {
+    //todo
+  }
 
-  const data = React.useMemo(
-    () => [
-      {
-        col1: 'Hello',
-        col2: 'World',
-        col3: '!!!'
-      },
-      {
-        col1: 'react-table',
-        col2: 'rocks',
-        col3: '!!!'
-      },
-      {
-        col1: 'whatever',
-        col2: 'you want',
-        col3: '!!!'
-      },
-    ],
-    []
-  )
-
-  const columns = React.useMemo(
-    () => [
-      {
-        Header: 'Column 1',
-        accessor: 'col1', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Column 2',
-        accessor: 'col2',
-      },
-      {
-        Header: 'Column 3',
-        accessor: 'col3'
-      }
-    ],
-    []
-  )
-
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({ columns, data })
-
-  
   return (
-    <div>
-      <div>
+    <div className="app">
+      <header >
         <label>Quantidade de estados</label>
         <input type="number" value={state.states} onChange={(e) => handleInputChange(e.target.value,'states')}/>
         <br/> 
@@ -89,22 +67,13 @@ function App() {
           value={state.symbols}
           onChange={(e) => handleInputChange( e.target.value,'symbols')}
         />
-        <label>Quantidade de simbolos</label>
-        <input 
-          type="number"
-          value={state.symbols}
-          onChange={(e) => handleInputChange( e.target.value,'symbols')}
-        />
-      </div>
-
-
-      <table {...getTableProps()} style={{ border: 'solid 1px blue' }}>
+      </header>
+      <main>
+      <table style={{ border: 'solid 1px blue' }}>
        <thead>
-         {headerGroups.map(headerGroup => (
-           <tr {...headerGroup.getHeaderGroupProps()}>
-             {headerGroup.headers.map(column => (
+           <tr>
+             {state.columns.map(column => (
                <th
-                 {...column.getHeaderProps()}
                  style={{
                    borderBottom: 'solid 3px red',
                    background: 'aliceblue',
@@ -112,28 +81,19 @@ function App() {
                    fontWeight: 'bold',
                  }}
                >
-                 {column.render('Header')}
+                 <input type="text"/>
                </th>
              ))}
            </tr>
-         ))}
        </thead>
-       <tbody {...getTableBodyProps()}>
-         {rows.map(row => {
-           prepareRow(row)
+       <tbody>
+         {state.rows.map(row => {
            return (
-             <tr {...row.getRowProps()}>
-               {row.cells.map(cell => {
+             <tr >
+               {state.columns.map(cell => {
                  return (
-                   <td
-                     {...cell.getCellProps()}
-                     style={{
-                       padding: '10px',
-                       border: 'solid 1px gray',
-                       background: 'papayawhip',
-                     }}
-                   >
-                     {cell.render('Cell')}
+                   <td>
+                    <input type="text"/>
                    </td>
                  )
                })}
@@ -142,9 +102,8 @@ function App() {
          })}
        </tbody>
      </table>
-
-
-    </div>
+    </main>
+  </div>
   );
 }
 
