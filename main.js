@@ -1,43 +1,25 @@
-//AFD Para GR
-
 let estadoInicial= "q0"
-let estadosFinais= ["q3","q4"];
+let estadosFinais= ["q1"];
 let transicoes= {
   q0:{
-    entradas: ["n","d"],
+    entradas: ["a","b"],
     transicoes:{
-      "n":"q1",
-      "d":"q2"
+      "a":"q0",
+      "b":"q1"
     },
   },
   q1:{
-    entradas: ["n","d"],
+    entradas: ["a"],
     transicoes:{
-      "n":"q2",
-      "d":"q3"
+      "a":"q2",
     },
   },
   q2:{
-    entradas: ["n","d"],
+    entradas: ["b"],
     transicoes:{
-      "n":"q3",
-      "d":"q4"
+      "b":"q1"
     },
   },
-  q3:{
-    entradas: ["n","d"],
-    transicoes:{
-      "n": "q1",
-      "d":"q2"
-    }
-  },
-  q4:{
-    entradas: ["n","d"],
-    transicoes:{
-      "n": "q1",
-      "d":"q2"
-    }
-  }
 }
 
 //Gramatica

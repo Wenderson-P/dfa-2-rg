@@ -30,7 +30,7 @@ function App() {
 
         if (stateValue > rowsLength) {
           for (stateValue; rowsLength < stateValue; rowsLength++) {
-            let insideArray = Array(state.columns.length).fill(" ")
+            let insideArray = Array(state.columns.length).fill("")
             auxRows.push(insideArray);
             auxStatesValues.push("q"+stateValue)
           }
@@ -57,14 +57,14 @@ function App() {
 
         if (inputValue > state[payload.target]) {
           for (inputValue; arraySize < inputValue; arraySize++) {
-            columsArray.push(" ")
+            columsArray.push("")
           }
 
           for (let i = 0; i < state.states; i++) {
 
             for (let j = 0; j < inputValue; j++) {
               if (!auxRowArray[i][j]) {
-                auxRowArray[i][j] = " "
+                auxRowArray[i][j] = ""
               }
             }
           }
@@ -204,7 +204,7 @@ const getEntradas = (index) =>{
 
     let estadosFinais = state.finalStates.map(finalIndex => state.statesValues[finalIndex])
 
-
+    console.log('A',automato)
     let grammar = afdToGr(estadoInicial,estadosFinais,automato);
 
     dispatch({ type: 'changeGrammar', payload: grammar })
