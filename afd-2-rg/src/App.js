@@ -291,7 +291,7 @@ const getEntradas = (index) =>{
         <div>
           <h3>Resultado:</h3>
           <div>
-            variaveis
+            variaveis {state.grammar.variaveis}
           </div>
           <div>
           terminais = {
