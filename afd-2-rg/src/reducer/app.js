@@ -42,7 +42,6 @@ export const reducer = (state, action) => {
         }
 
         for (let i = 0; i < state.states; i++) {
-
           for (let j = 0; j < inputValue; j++) {
             if (!auxRowArray[i][j]) {
               auxRowArray[i][j] = ""
@@ -50,21 +49,14 @@ export const reducer = (state, action) => {
           }
         }
       } else {
-
-
         for (let i = 0; i < state.states; i++) {
-
           for (let j = state.columns.length; j >= inputValue; j--) {
-            if (auxRowArray[i][j]) {
-              auxRowArray[i].pop()
-            }
+              auxRowArray[i].splice(j,1)
           }
         }
-
         columsArray = state.columns.filter(
           (_, index) => index <= inputValue - 1);
       }
-
 
       return {
         ...state,
