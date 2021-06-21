@@ -118,6 +118,10 @@ function App() {
     </div>
   }
 
+  const handleChangeSymbol = (index,value)=>{
+    dispatch({ type: 'changeSymbol', payload: {index,value} })
+  }
+
   return (
     <div className="app">
       <header >
@@ -153,9 +157,9 @@ function App() {
           <thead>
             <tr>
               <th>	&delta;</th>
-              {state.columns.map(column => (
+              {state.columns.map((column,rowIndex) => (
                 <th>
-                  <input type="text" value={column} />
+                  <input type="text" value={column} onChange={(e) => handleChangeSymbol(rowIndex,e.target.value)} />
                 </th>
               ))}
             </tr>

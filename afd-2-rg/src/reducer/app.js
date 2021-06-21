@@ -107,6 +107,17 @@ export const reducer = (state, action) => {
           }
         })
       }
+      case "changeSymbol":
+        return {
+          ...state,
+          columns: state.columns.map((value, i) =>{
+            if (i === payload.index) {
+              return payload.value
+            } else {
+              return value
+            }
+          })
+        }
     case "changeAutomato":
       return {
         ...state,
