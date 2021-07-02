@@ -31,7 +31,7 @@ function afdToGr(estadoInicial, estadosFinais, transicoes) {
     let estadoAtual =chavesDosEstados[index];
 
     if(estadosFinais.includes(estadoAtual)){
-      producoes.push(transicoes[estadoAtual].variavel+`-> vazio`)
+      producoes.push(transicoes[estadoAtual].variavel+` → vazio`)
     }
     let variavelAtual = transicoes[estadoAtual].variavel
 
@@ -40,7 +40,7 @@ function afdToGr(estadoInicial, estadosFinais, transicoes) {
 
       let destinoAtual = transicoes[destino].variavel
       
-      producoes.push(`${variavelAtual} -> ${entrada+destinoAtual}`)
+      producoes.push(`${variavelAtual} → ${entrada+destinoAtual}`)
     }); 
   });
 

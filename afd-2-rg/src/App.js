@@ -88,6 +88,18 @@ function App() {
     return state.initialState === index ? true : false
   }
 
+  const changeGrammarTitles = (variable) => {
+    console.log(variable)
+    switch (variable) {
+      case 'variaveis':
+        return 'Variáveis:';
+      case 'terminais':
+        return 'Terminais:';
+      case 'producoes':
+        return 'Produções:';
+    }
+  }
+
   const StateSelector = ({title,estaSelecionado,highlightClass,dispatchType}) => {
     return (
       <div key={title} className="stateContainer">
@@ -105,15 +117,15 @@ function App() {
     )
   }
 
-  const printItems = (variable,isArray = true) => {
+  const printItems = (variable, isArray = true) => {
     if(!isArray){
       return <div>
-      <h4>variavel Inicial:</h4>
+      <h4>Variável inicial:</h4>
       {state.grammar[variable]}
       </div>
     }
     return <div>
-      <h4>{variable}:</h4>
+      <h4>{changeGrammarTitles(variable)}</h4>
       {state.grammar[variable].map(item => <span>{item}</span>)}
     </div>
   }
@@ -125,7 +137,7 @@ function App() {
   return (
     <div className="app">
       <header >
-        <h1>Conversor AFD Para Gramatica regular</h1>
+        <h1>Conversor AFD para Gramática Regular</h1>
         <label>Quantidade de estados</label>
         <input
           type="number"
@@ -139,13 +151,13 @@ function App() {
           onChange={(e) => handleInputChange(e.target.value, 'symbols')}
         />
         <StateSelector
-          title="Qual o estado inicial ?"
+          title="Qual o estado inicial?"
           estaSelecionado={initialStateIsSelected}
           dispatchType="changeInitialState"
           highlightClass="initialState"
         />
         <StateSelector
-          title="Quais os estados finais ?"
+          title="Qual(is) o(s) estado(s) final(is)?"
           estaSelecionado={finalStateIsSelected}
           dispatchType="changeFinalState"
           highlightClass="finalState"
@@ -188,7 +200,7 @@ function App() {
         
           {state.grammar && 
           <div className="resultContainer">
-            <h3>GR</h3>
+            <h3>Gramática:</h3>
             {printItems('variaveis')}
             {printItems('terminais')}
             {printItems('producoes')}
