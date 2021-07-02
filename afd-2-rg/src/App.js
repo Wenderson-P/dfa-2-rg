@@ -138,18 +138,24 @@ function App() {
     <div className="app">
       <header >
         <h1>Conversor AFD para Gramática Regular</h1>
-        <label>Quantidade de estados</label>
-        <input
-          type="number"
-          value={state.states}
-          onChange={(e) => handleInputChange(e.target.value, 'states')}
-        />
-        <label>Quantidade de simbolos</label>
-        <input
-          type="number"
-          value={state.symbols}
-          onChange={(e) => handleInputChange(e.target.value, 'symbols')}
-        />
+      </header>
+      <div className="options">
+        <div className='quantitySelector'>
+          <label>Quantidade de estados:</label>
+          <input
+            type="number"
+            value={state.states}
+            onChange={(e) => handleInputChange(e.target.value, 'states')}
+          />
+        </div>
+        <div className='quantitySelector'>
+        <label>Quantidade de símbolos:</label>
+          <input
+            type="number"
+            value={state.symbols}
+            onChange={(e) => handleInputChange(e.target.value, 'symbols')}
+          />
+        </div>
         <StateSelector
           title="Qual o estado inicial?"
           estaSelecionado={initialStateIsSelected}
@@ -161,14 +167,13 @@ function App() {
           estaSelecionado={finalStateIsSelected}
           dispatchType="changeFinalState"
           highlightClass="finalState"
-
         />
-      </header>
+      </div>
       <main>
         <table>
           <thead>
             <tr>
-              <th>	&delta;</th>
+              <th className="no-bottom-border">	&delta;</th>
               {state.columns.map((column,rowIndex) => (
                 <th>
                   <input type="text" value={column} onChange={(e) => handleChangeSymbol(rowIndex,e.target.value)} />
