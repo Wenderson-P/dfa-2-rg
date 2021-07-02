@@ -1,39 +1,10 @@
-let estadoInicial= "q0"
-let estadosFinais= ["q1"];
-let transicoes= {
-  q0:{
-    entradas: ["a","b"],
-    transicoes:{
-      "a":"q0",
-      "b":"q1"
-    },
-  },
-  q1:{
-    entradas: ["a"],
-    transicoes:{
-      "a":"q2",
-    },
-  },
-  q2:{
-    entradas: ["b"],
-    transicoes:{
-      "b":"q1"
-    },
-  },
-}
-
-//Gramatica
-let variaveis = [];
-let terminais = [];
-let producoes = [];
-let variavelInicial = '';
-
-
-let letras = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
-    'M', 'N', 'O', 'P', 'Q', 'R'];
-
-function main() {
-
+function afdToGr(estadoInicial, estadosFinais, transicoes) {
+  let variaveis = [];
+  let terminais = [];
+  let producoes = [];
+  let variavelInicial = '';
+  let letras = ['S', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
+      'M', 'N', 'O', 'P', 'Q', 'R'];
 
   let chavesDosEstados = Object.keys(transicoes);
 
@@ -55,14 +26,12 @@ function main() {
     }); 
   });
   
-
-
   //Define producoes
   Object.values(transicoes).forEach((estado, index) => {
     let estadoAtual =chavesDosEstados[index];
 
     if(estadosFinais.includes(estadoAtual)){
-      producoes.push(transicoes[estadoAtual].variavel+`-> vazio`)
+      producoes.push(transicoes[estadoAtual].variavel+` → ε`)
     }
     let variavelAtual = transicoes[estadoAtual].variavel
 
@@ -71,13 +40,20 @@ function main() {
 
       let destinoAtual = transicoes[destino].variavel
       
-      producoes.push(`${variavelAtual} -> ${entrada+destinoAtual}`)
+      producoes.push(`${variavelAtual} → ${entrada+destinoAtual}`)
     }); 
   });
 
   variavelInicial = transicoes[estadoInicial].variavel;
 
-  console.log('variaveis:', variaveis, '\nterminais:', terminais, '\nproducoes:', producoes, '\nvariavelInicial:', variavelInicial);
+  // console.log('variaveis:', variaveis, '\nterminais:', terminais, '\nproducoes:', producoes, '\nvariavelInicial:', variavelInicial);
 
+  return {
+    variaveis: variaveis,
+    terminais: terminais,
+    producoes: producoes,
+    variavelInicial: variavelInicial
+  }
 }
-main();
+
+module.exports = afdToGr;
