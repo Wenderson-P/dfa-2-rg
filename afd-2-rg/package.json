@@ -2,6 +2,7 @@
   "name": "afd-2-rg",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://wenderson-p.github.io/dfa-2-rg",
   "dependencies": {
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
