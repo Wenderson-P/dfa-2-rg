@@ -1,70 +1,24 @@
-# AFD Para GR
+# Conversor de AFD (Autômato Finito Determinístico) para GR (Gramática Regular)
+Trabalho de Teoria da Computação 2020.2
 
-## Como funciona a entrada
+## Configuração do projeto para executar localmente
+Para executar o projeto localmente, é necessário ter instalado uma versão recente do [Node.js](https://nodejs.org/en/).
 
-Cada automato eh composto de estados,terminais e transicoes.
+Dentro da pasta do projeto, temos o algoritmo desenvolvido e temos também a pasta `afd-2-rg` que contém o projeto web, que utiliza este mesmo algoritmo e nos dá uma interface para facilitar o uso da ferramenta.
 
-A gramatica eh composta de :
-G = V,T,P,S
-  V = {S,A,B}
-  T = {a,b}
-  P = regras de producao
-  S = {S} //estado inicial
+Na pasta `afd-2-rg`, execute no terminal o comando
+```
+npm install
+```
+para instalar todas as dependências necessárias para rodar o projeto localmente.
 
+Em seguida, podemos iniciar o projeto executando o comando
+```
+npm start
+```
+que abrirá um janela do navegador.
 
-Um estado de AFD eh composto:
-Numeracao do estado (q0,q1,q2)
-Qual a entrada que ele aceita
-Qual a transicao que ele leva
+Com o projeto executando, basta selecionar os parâmetros de entrada, bem como definir o autômato através da tabela e fazer a conversão clicando no botão **Converter para GR**.
 
-EX:
-Q0, recebe a e leva para q0
-Q0, recebe b e leva para q1
-
-A entrada de um afd seria:
-
-
-estadoInicial: [q0],
-estadosFinais: [q1],
-transicoes: {
-  q0:{
-    entradas: [a,b],
-    transicoes:{
-      a:q0,
-      b:q1
-    }
-  },
-  q1:{
-    entradas: [a],
-    transicoes:{
-      a:q2,
-    }
-  },
-  q2:{
-    entradas: [b],
-    transicoes:{
-      b:q1
-    }
-  }
-}
-
-q0 = S
-S -> aS
-q1 vira A
-S -> bA
-
-aS
-aab
-aaabab
-ab
-abab
-abababab
-
-
-PSEUDO CODE
-Inicia o automato
-Estado inicial, se torna a letra S
-Enquanto houver entradas nao percorridas
-  Faz a transicao
-  o proximo estado ja foi mapeado ?
-    Se nao, atribua uma nova variavel
+## Versão online
+A versão atual do projeto também está disponível na URL [https://wenderson.dev/dfa-2-rg/](https://wenderson.dev/dfa-2-rg/) para facilitar nos testes.
