@@ -1,6 +1,11 @@
 # Conversor de AFD (Autômato Finito Determinístico) para GR (Gramática Regular)
 Trabalho de Teoria da Computação 2020.2
 
+Integrantes:
+* Alexander Victor
+* Diego Winter
+* Wenderson Pacheco
+
 ## Configuração do projeto para executar localmente
 Para executar o projeto localmente, é necessário ter instalado uma versão recente do [Node.js](https://nodejs.org/en/).
 
