@@ -2,7 +2,7 @@ import './App.css';
 
 import { useReducer } from 'react';
 import React from 'react';
-import afdToGr from './converteAutomato';
+import parser from './converteAutomato';
 import { reducer } from './reducer/app';
 
 function App() {
@@ -10,6 +10,8 @@ function App() {
     states: 12,
     actions: 6,
     gotoQuantity: 3,
+    productionQuantity: 6,
+    productions: ['E->E + T', 'E->T', 'T->T * F', 'T->F', 'F->E', 'F->id'],
     columns: ['id', '+', '*', '(', ')', '$'],
     goto: ['E', 'T', 'F'],
     rows: [
@@ -54,10 +56,6 @@ function App() {
       '10',
       '11',
     ],
-    initialState: 0,
-    finalStates: [1],
-    automato: {},
-    grammar: null,
   };
 
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -68,6 +66,8 @@ function App() {
         dispatch({ type: 'changeStateInput', payload: { value, target } });
       } else if (target === 'actions') {
         dispatch({ type: 'changeActionsInput', payload: { value, target } });
+      } else if (target === 'productionQuantity') {
+        dispatch({ type: 'changeProductionInput', payload: { value, target } });
       } else {
         dispatch({ type: 'changeGoToInput', payload: { value, target } });
       }
@@ -81,6 +81,13 @@ function App() {
     });
   };
 
+  const handleGotoValue = (value, rowIndex, columnIndex) => {
+    dispatch({
+      type: 'changeGoToValue',
+      payload: { value, rowIndex, columnIndex },
+    });
+  };
+
   const handleStateValue = (index, value) => {
     dispatch({
       type: 'changeStateValue',
@@ -88,39 +95,17 @@ function App() {
     });
   };
 
-  const getEntradas = (index) => {
-    let auxArray = [...state.rows[index]];
-    let transicoes = {};
-    let entradas = auxArray
-      .map((transicao, indexTransicao) => {
-        if (transicao !== '') {
-          let letter = state.columns[indexTransicao];
-          transicoes[letter] = transicao;
-          return letter;
-        }
-      })
-      .filter((value) => value !== undefined);
-
-    return { entradas, transicoes };
-  };
-
   const handleButtonClick = () => {
-    let automato = {};
-    state.statesValues.forEach((estado, estadoIndex) => {
-      let { entradas, transicoes } = getEntradas(estadoIndex);
-      automato[estado] = {
-        entradas,
-        transicoes,
-      };
+    parser({
+      quantidadeEstados: state.states,
+      quantidadeProducoes: state.productionQuantity,
+      simbolos: state.columns,
+      cabecasProducoes: state.goto,
+      producoes: state.productions.map((prod) => prod.split('->')),
+      action: state.rows,
+      goto: state.goToRows,
     });
-
     // dispatch({ type: 'changeAutomato', payload: automato });
-
-    let estadoInicial = state.statesValues[state.initialState];
-
-    let estadosFinais = state.finalStates.map(
-      (finalIndex) => state.statesValues[finalIndex]
-    );
 
     //let grammar = afdToGr(estadoInicial, estadosFinais, automato);
 
@@ -135,6 +120,8 @@ function App() {
         return 'Terminais:';
       case 'producoes':
         return 'Produções:';
+      default:
+        break;
     }
   };
 
@@ -218,9 +205,12 @@ function App() {
                     <input
                       type="text"
                       value={column}
-                      onChange={(e) =>
-                        handleChangeSymbol(rowIndex, e.target.value)
-                      }
+                      onChange={(e) => {
+                        dispatch({
+                          type: 'changeGoToSymbol',
+                          payload: { index: rowIndex, value: e.target.value },
+                        });
+                      }}
                     />
                   </th>
                 ))}
@@ -266,7 +256,7 @@ function App() {
                           type="text"
                           value={cell}
                           onChange={(e) =>
-                            handleStateQuantity(
+                            handleGotoValue(
                               e.target.value.trim(),
                               rowIndex,
                               columnIndex
@@ -281,6 +271,33 @@ function App() {
             })}
           </tbody>
         </table>
+        <div className="quantitySelector">
+          <label>Quantidade de Regras de Produção</label>
+          <input
+            type="number"
+            value={state.productionQuantity}
+            onChange={(e) =>
+              handleInputChange(e.target.value, 'productionQuantity')
+            }
+          />
+          <p style={{ color: '#333', marginBottom: 16 }}>
+            A -> é obrigatoria para gerar a regra, e utilize espaço para separar
+            os simbolos
+          </p>
+          {state.productions.map((column, rowIndex) => (
+            <input
+              style={{ margin: 4, borderBottom: '1px solid black' }}
+              type="text"
+              value={column}
+              onChange={(e) => {
+                dispatch({
+                  type: 'changeProductionValue',
+                  payload: { index: rowIndex, value: e.target.value },
+                });
+              }}
+            />
+          ))}
+        </div>
         <div className="resultContainer">
           <button className="convertButton" onClick={() => handleButtonClick()}>
             Parsear

@@ -3,6 +3,7 @@ export const reducer = (state, action) => {
   const payloadValue = payload.value;
   let rowsLength = state.rows.length;
   let auxRowArray = [...state.rows];
+  const { value, rowIndex, columnIndex } = payload;
 
   switch (type) {
     case 'changeStateInput':
@@ -63,34 +64,76 @@ export const reducer = (state, action) => {
         rows: auxRowArray,
       };
     case 'changeGoToInput':
-      let goToArray = [...state.goto];
       let goToLength = state.goto.length;
+      auxRowArray = [...state.goToRows];
+      let gotoValues = [...state.goto];
+
       if (payloadValue > state[payload.target]) {
         for (payloadValue; goToLength < payloadValue; goToLength++) {
-          goToArray.push('');
+          gotoValues.push('');
+        }
+        for (let i = 0; i < state.states; i++) {
+          for (let j = 0; j < payloadValue; j++) {
+            if (!auxRowArray[i][j]) {
+              auxRowArray[i][j] = '';
+            }
+          }
         }
       } else {
-        goToArray = state.goto.filter((_, index) => index <= payloadValue - 1);
+        for (let i = 0; i < state.states; i++) {
+          for (let j = state.goToRows.length; j >= payloadValue; j--) {
+            auxRowArray[i].splice(j, 1);
+          }
+        }
+        gotoValues = state.goto.filter((_, index) => index <= payloadValue - 1);
       }
-
-      console.log({
-        ...state,
-        gotoQuantity: payload.value,
-        goto: goToArray,
-        rows: auxRowArray,
-      });
 
       return {
         ...state,
         gotoQuantity: payload.value,
-        goto: goToArray,
-        rows: auxRowArray,
+        goto: gotoValues,
+        goToRows: auxRowArray,
+      };
+    case 'changeProductionInput':
+      let productionsLength = state.productions.length;
+      let productionValues = [...state.productions];
+
+      if (payloadValue > state[payload.target]) {
+        for (
+          payloadValue;
+          productionsLength < payloadValue;
+          productionsLength++
+        ) {
+          productionValues.push('->');
+        }
+      } else {
+        productionValues = state.productions.filter(
+          (_, index) => index <= payloadValue - 1
+        );
+      }
+
+      return {
+        ...state,
+        productionQuantity: payload.value,
+        productions: productionValues,
       };
     case 'changeStateQuantity':
-      const { value, rowIndex, columnIndex } = payload;
       return {
         ...state,
         rows: state.rows.map((row, i) =>
+          row.map((cell, j) => {
+            if (i === rowIndex && columnIndex === j) {
+              return value;
+            } else {
+              return cell;
+            }
+          })
+        ),
+      };
+    case 'changeGoToValue':
+      return {
+        ...state,
+        goToRows: state.goToRows.map((row, i) =>
           row.map((cell, j) => {
             if (i === rowIndex && columnIndex === j) {
               return value;
@@ -120,6 +163,28 @@ export const reducer = (state, action) => {
       return {
         ...state,
         columns: state.columns.map((value, i) => {
+          if (i === payload.index) {
+            return payload.value;
+          } else {
+            return value;
+          }
+        }),
+      };
+    case 'changeGoToSymbol':
+      return {
+        ...state,
+        goto: state.goto.map((value, i) => {
+          if (i === payload.index) {
+            return payload.value;
+          } else {
+            return value;
+          }
+        }),
+      };
+    case 'changeProductionValue':
+      return {
+        ...state,
+        productions: state.productions.map((value, i) => {
           if (i === payload.index) {
             return payload.value;
           } else {
