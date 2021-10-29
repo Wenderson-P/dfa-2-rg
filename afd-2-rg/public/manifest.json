@@ -1,6 +1,6 @@
 {
-  "short_name": "AFD-> GR",
-  "name": "AFD-> GR",
+  "short_name": "Parser LR",
+  "name": "Parser LR",
   "icons": [
     {
       "src": "favicon.ico",

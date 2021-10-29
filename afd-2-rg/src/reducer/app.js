@@ -1,134 +1,133 @@
 export const reducer = (state, action) => {
-  const { type, payload } = action
+  const { type, payload } = action;
+  const payloadValue = payload.value;
+  let rowsLength = state.rows.length;
+  let auxRowArray = [...state.rows];
 
   switch (type) {
-    case "changeStateInput":
-      const stateValue = payload.value
+    case 'changeStateInput':
+      let auxRows = [...state.rows];
+      let auxStatesValues = [...state.statesValues];
 
-      let rowsLength = state.rows.length
-      let auxRows = [...state.rows]
-      let auxStatesValues = [...state.statesValues]
-
-      if (stateValue > rowsLength) {
-        for (stateValue; rowsLength < stateValue; rowsLength++) {
-          let insideArray = Array(state.columns.length).fill("")
+      if (payloadValue > rowsLength) {
+        for (payloadValue; rowsLength < payloadValue; rowsLength++) {
+          let insideArray = Array(state.columns.length).fill('');
           auxRows.push(insideArray);
-          auxStatesValues.push("q"+(stateValue-1))
+          auxStatesValues.push(payloadValue - 1);
         }
       } else {
-        auxRows = state.rows.filter(
-          (_, index) => index <= stateValue - 1)
+        auxRows = state.rows.filter((_, index) => index <= payloadValue - 1);
 
         auxStatesValues = auxStatesValues.filter(
-          (_, index) => index <= stateValue - 1)
+          (_, index) => index <= payloadValue - 1
+        );
       }
 
       return {
         ...state,
-        states: stateValue,
+        states: payloadValue,
         rows: auxRows,
-        statesValues : auxStatesValues
-      }
-    case "changeSymbolsInput":
-      const inputValue = payload.value
+        statesValues: auxStatesValues,
+      };
+    case 'changeActionsInput':
+      let columnsLength = state.columns.length;
+      let columsArray = [...state.columns];
 
-      let arraySize = state.columns.length
-      let columsArray = [...state.columns]
-      let auxRowArray = [...state.rows];
-
-      if (inputValue > state[payload.target]) {
-        for (inputValue; arraySize < inputValue; arraySize++) {
-          columsArray.push("")
+      if (payloadValue > state[payload.target]) {
+        for (payloadValue; columnsLength < payloadValue; columnsLength++) {
+          columsArray.push('');
         }
 
         for (let i = 0; i < state.states; i++) {
-          for (let j = 0; j < inputValue; j++) {
+          for (let j = 0; j < payloadValue; j++) {
             if (!auxRowArray[i][j]) {
-              auxRowArray[i][j] = ""
+              auxRowArray[i][j] = '';
             }
           }
         }
       } else {
         for (let i = 0; i < state.states; i++) {
-          for (let j = state.columns.length; j >= inputValue; j--) {
-              auxRowArray[i].splice(j,1)
+          for (let j = state.columns.length; j >= payloadValue; j--) {
+            auxRowArray[i].splice(j, 1);
           }
         }
         columsArray = state.columns.filter(
-          (_, index) => index <= inputValue - 1);
+          (_, index) => index <= payloadValue - 1
+        );
       }
 
       return {
         ...state,
         [payload.target]: payload.value,
         columns: columsArray,
-        rows: auxRowArray
+        rows: auxRowArray,
+      };
+    case 'changeGoToInput':
+      let goToArray = [...state.goto];
+      let goToLength = state.goto.length;
+      if (payloadValue > state[payload.target]) {
+        for (payloadValue; goToLength < payloadValue; goToLength++) {
+          goToArray.push('');
+        }
+      } else {
+        goToArray = state.goto.filter((_, index) => index <= payloadValue - 1);
       }
 
-    case "changeStateQuantity":
+      console.log({
+        ...state,
+        gotoQuantity: payload.value,
+        goto: goToArray,
+        rows: auxRowArray,
+      });
+
+      return {
+        ...state,
+        gotoQuantity: payload.value,
+        goto: goToArray,
+        rows: auxRowArray,
+      };
+    case 'changeStateQuantity':
       const { value, rowIndex, columnIndex } = payload;
       return {
         ...state,
-        rows: state.rows.map((row, i) => row.map((cell, j) => {
-          if (i === rowIndex && columnIndex === j) {
-            return value
-          } else {
-            return cell
-          }
-        }))
-      }
-    case "changeInitialState":
-      return {
-        ...state,
-        initialState: payload
-      }
-    case "changeFinalState":
-      let auxFinalStates = [...state.finalStates]
-
-      let valueIndex = auxFinalStates.findIndex((item) => item ===payload);
-
-      if(valueIndex >=0){
-        auxFinalStates.splice(valueIndex,1)
-      }else{
-        auxFinalStates.push(payload)
-      }
-      return {
-        ...state,
-        finalStates: auxFinalStates
-      }
-    case "changeStateValue":
-      return {
-        ...state,
-        statesValues: state.statesValues.map((value, i) =>{
-          if (i === payload.index) {
-            return payload.value
-          } else {
-            return value
-          }
-        })
-      }
-      case "changeSymbol":
-        return {
-          ...state,
-          columns: state.columns.map((value, i) =>{
-            if (i === payload.index) {
-              return payload.value
+        rows: state.rows.map((row, i) =>
+          row.map((cell, j) => {
+            if (i === rowIndex && columnIndex === j) {
+              return value;
             } else {
-              return value
+              return cell;
             }
           })
-        }
-    case "changeAutomato":
+        ),
+      };
+    case 'changeInitialState':
       return {
         ...state,
-        automato : payload
-      }
-    case "changeGrammar":
+        initialState: payload,
+      };
+    case 'changepayloadValue':
       return {
         ...state,
-        grammar : payload
-      }
+        statesValues: state.statesValues.map((value, i) => {
+          if (i === payload.index) {
+            return payload.value;
+          } else {
+            return value;
+          }
+        }),
+      };
+    case 'changeSymbol':
+      return {
+        ...state,
+        columns: state.columns.map((value, i) => {
+          if (i === payload.index) {
+            return payload.value;
+          } else {
+            return value;
+          }
+        }),
+      };
     default:
       break;
   }
-}
+};
