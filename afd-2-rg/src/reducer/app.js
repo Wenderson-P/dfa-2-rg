@@ -8,26 +8,33 @@ export const reducer = (state, action) => {
   switch (type) {
     case 'changeStateInput':
       let auxRows = [...state.rows];
+      let auxGoToRows = [...state.goToRows];
       let auxStatesValues = [...state.statesValues];
 
       if (payloadValue > rowsLength) {
         for (payloadValue; rowsLength < payloadValue; rowsLength++) {
           let insideArray = Array(state.columns.length).fill('');
+          let insideGotoArray = Array(state.goto.length).fill('');
           auxRows.push(insideArray);
+          auxGoToRows.push(insideGotoArray);
           auxStatesValues.push(payloadValue - 1);
         }
       } else {
         auxRows = state.rows.filter((_, index) => index <= payloadValue - 1);
-
+        auxGoToRows = state.goToRows.filter(
+          (_, index) => index <= payloadValue - 1
+        );
         auxStatesValues = auxStatesValues.filter(
           (_, index) => index <= payloadValue - 1
         );
       }
+      console.log(auxGoToRows);
 
       return {
         ...state,
         states: payloadValue,
         rows: auxRows,
+        goToRows: auxGoToRows,
         statesValues: auxStatesValues,
       };
     case 'changeActionsInput':
@@ -159,6 +166,19 @@ export const reducer = (state, action) => {
           }
         }),
       };
+
+    case 'changePropertyValue': {
+      return {
+        ...state,
+        columns: state[payload.property].map((value, i) => {
+          if (i === payload.index) {
+            return payload.value;
+          } else {
+            return value;
+          }
+        }),
+      };
+    }
     case 'changeSymbol':
       return {
         ...state,

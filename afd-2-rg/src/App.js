@@ -144,134 +144,148 @@ function App() {
     );
   };
 
-  const handleChangeSymbol = (index, value) => {
-    dispatch({ type: 'changeSymbol', payload: { index, value } });
+  const handleChangeProperty = (index, value, property) => {
+    dispatch({
+      type: 'changePropertyValue',
+      payload: { index, value, property },
+    });
+  };
+
+  const RenderHeaderInput = ({ title, value, property }) => {
+    return (
+      <div className="quantitySelector">
+        <label>{title}</label>
+        <div className="headerInputContainer">
+          <button
+            onClick={(e) => handleInputChange(state[property] - 1, property)}
+          >
+            -
+          </button>
+
+          <span>{state[property]}</span>
+          <button
+            onClick={(e) => handleInputChange(state[property] + 1, property)}
+          >
+            +
+          </button>
+        </div>
+      </div>
+    );
   };
 
   return (
     <div className="app">
       <h1>PARSER LR</h1>
       <div className="options">
-        <div className="quantitySelector">
-          <label>Quantidade de estados:</label>
-          <input
-            type="number"
-            value={state.states}
-            onChange={(e) => handleInputChange(e.target.value, 'states')}
-          />
-        </div>
-        <div className="quantitySelector">
-          <label>Quantidade de Simbolos:</label>
-          <input
-            type="number"
-            value={state.actions}
-            onChange={(e) => handleInputChange(e.target.value, 'actions')}
-          />
-        </div>
-        <div className="quantitySelector">
-          <label>Quantidade GO TO:</label>
-          <input
-            type="number"
-            value={state.gotoQuantity}
-            onChange={(e) => handleInputChange(e.target.value, 'gotoQuantity')}
-          />
-        </div>
+        <RenderHeaderInput title="Quantidade de Estados:" property="states" />
+        <RenderHeaderInput title="Quantidade de Simbolos:" property="actions" />
+        <RenderHeaderInput title="Quantidade GO TO:" property="gotoQuantity" />
       </div>
       <main>
-        <table>
-          <thead>
-            <tr>
-              <th className="no-bottom-border">Estados</th>
-              <th colSpan={state.columns.length}>
-                Ações
-                <tr>
-                  {state.columns.map((column, rowIndex) => (
-                    <th>
+        <div className="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th className="no-bottom-border" style={{ color: '#545454' }}>
+                  Estados
+                </th>
+                <th colSpan={state.columns.length}>
+                  Ações
+                  <tr>
+                    {state.columns.map((column, rowIndex) => (
+                      <th>
+                        <input
+                          type="text"
+                          value={column}
+                          onChange={(e) =>
+                            handleChangeProperty(
+                              rowIndex,
+                              e.target.value,
+                              'columns'
+                            )
+                          }
+                        />
+                      </th>
+                    ))}
+                  </tr>
+                </th>
+                <th colSpan={6}>
+                  GoTo
+                  {state.goto.map((column, rowIndex) => (
+                    <th style={{ maxWidth: 90 }}>
                       <input
                         type="text"
                         value={column}
-                        onChange={(e) =>
-                          handleChangeSymbol(rowIndex, e.target.value)
-                        }
+                        onChange={(e) => {
+                          handleChangeProperty(
+                            rowIndex,
+                            e.target.value,
+                            'goto'
+                          );
+                        }}
                       />
                     </th>
                   ))}
-                </tr>
-              </th>
-              <th colSpan={6}>
-                GoTo
-                {state.goto.map((column, rowIndex) => (
-                  <th style={{ maxWidth: 90 }}>
-                    <input
-                      type="text"
-                      value={column}
-                      onChange={(e) => {
-                        dispatch({
-                          type: 'changeGoToSymbol',
-                          payload: { index: rowIndex, value: e.target.value },
-                        });
-                      }}
-                    />
-                  </th>
-                ))}
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {state.rows.map((row, rowIndex) => {
-              return (
-                <tr>
-                  <td className="stateColumn">
-                    <input
-                      type="text"
-                      value={state.statesValues[rowIndex]}
-                      onChange={(e) =>
-                        handleStateValue(rowIndex, e.target.value)
-                      }
-                      disabled
-                    />
-                  </td>
-                  {row.map((cell, columnIndex) => {
-                    return (
-                      <td>
-                        <input
-                          type="text"
-                          value={cell}
-                          onChange={(e) =>
-                            handleStateQuantity(
-                              e.target.value.trim(),
-                              rowIndex,
-                              columnIndex
-                            )
-                          }
-                        />
-                      </td>
-                    );
-                  })}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.rows.map((row, rowIndex) => {
+                return (
+                  <tr>
+                    <td className="stateColumn">
+                      <input
+                        type="text"
+                        value={state.statesValues[rowIndex]}
+                        onChange={(e) =>
+                          handleStateValue(rowIndex, e.target.value)
+                        }
+                        disabled
+                      />
+                    </td>
+                    {row.map((cell, columnIndex) => {
+                      return (
+                        <td>
+                          <input
+                            type="text"
+                            value={cell}
+                            onChange={(e) =>
+                              handleStateQuantity(
+                                e.target.value.trim(),
+                                rowIndex,
+                                columnIndex
+                              )
+                            }
+                          />
+                        </td>
+                      );
+                    })}
 
-                  {state.goToRows[rowIndex].map((cell, columnIndex) => {
-                    return (
-                      <td>
-                        <input
-                          type="text"
-                          value={cell}
-                          onChange={(e) =>
-                            handleGotoValue(
-                              e.target.value.trim(),
-                              rowIndex,
-                              columnIndex
-                            )
-                          }
-                        />
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-        <div className="quantitySelector">
+                    {state.goToRows[rowIndex] &&
+                      state.goToRows[rowIndex]?.map((cell, columnIndex) => {
+                        return (
+                          <td>
+                            <input
+                              type="text"
+                              value={cell}
+                              onChange={(e) =>
+                                handleGotoValue(
+                                  e.target.value.trim(),
+                                  rowIndex,
+                                  columnIndex
+                                )
+                              }
+                            />
+                          </td>
+                        );
+                      })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div>
           <label>Quantidade de Regras de Produção</label>
           <input
             type="number"
@@ -290,10 +304,7 @@ function App() {
               type="text"
               value={column}
               onChange={(e) => {
-                dispatch({
-                  type: 'changeProductionValue',
-                  payload: { index: rowIndex, value: e.target.value },
-                });
+                handleChangeProperty(rowIndex, e.target.value, 'productions');
               }}
             />
           ))}
