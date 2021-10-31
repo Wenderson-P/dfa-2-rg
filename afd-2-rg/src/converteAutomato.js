@@ -6,16 +6,8 @@ const parser = ({
   producoes,
   action,
   goto,
+  entrada,
 }) => {
-  console.log({
-    quantidadeEstados,
-    quantidadeProducoes,
-    simbolos,
-    cabecasProducoes,
-    producoes,
-    action,
-    goto,
-  });
   // ENTRADAS ATRAVÉS DO TECLADO - MANTER COMENTADO DURANTE O DESENVOLVIMENTO
   // PARA UTILIZAR OS DADOS DEFINIDOS DIRETAMENTE.
   // Entradas iniciais essenciais para iterar a obtenção das outras entradas
@@ -63,8 +55,6 @@ const parser = ({
   // TODO: Adicionar a entrada da sequência para teste
 
   // DADOS PARA TESTES DURANTE DESENVOLVIMENTO (PARA NÃO PRECISAR DIGITAR TODA VEZ)
-
-  const entrada = ['id', '*', 'id', '$'];
 
   // Execução do algoritmo
   const pilhaEstados = [0]; // pilha para armazenar estados

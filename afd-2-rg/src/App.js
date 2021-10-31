@@ -28,7 +28,7 @@ function App() {
       ['', 'r3', 'r3', '', 'r3', 'r3'],
       ['', 'r5', 'r5', '', 'r5', 'r5'],
     ],
-    goToRows: [
+    gotoRows: [
       ['1', '2', '3'],
       ['', '', ''],
       ['', '', ''],
@@ -56,6 +56,7 @@ function App() {
       '10',
       '11',
     ],
+    entry: 'id * id $',
   };
 
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
@@ -68,6 +69,8 @@ function App() {
         dispatch({ type: 'changeActionsInput', payload: { value, target } });
       } else if (target === 'productionQuantity') {
         dispatch({ type: 'changeProductionInput', payload: { value, target } });
+      } else if (target === 'entry') {
+        dispatch({ type: 'changeEntryInput', payload: { value, target } });
       } else {
         dispatch({ type: 'changeGoToInput', payload: { value, target } });
       }
@@ -96,14 +99,18 @@ function App() {
   };
 
   const handleButtonClick = () => {
+    const parsedProduction = state.productions.map((prod) => prod.split('->'));
+    const parsedEntry = state.entry.split(` `);
+    console.log(parsedProduction);
     parser({
       quantidadeEstados: state.states,
       quantidadeProducoes: state.productionQuantity,
       simbolos: state.columns,
       cabecasProducoes: state.goto,
-      producoes: state.productions.map((prod) => prod.split('->')),
+      producoes: parsedProduction,
       action: state.rows,
-      goto: state.goToRows,
+      goto: state.gotoRows,
+      entrada: parsedEntry,
     });
     // dispatch({ type: 'changeAutomato', payload: automato });
 
@@ -158,12 +165,14 @@ function App() {
         <div className="headerInputContainer">
           <button
             onClick={(e) => handleInputChange(state[property] - 1, property)}
+            className="quantity-button"
           >
             -
           </button>
 
           <span>{state[property]}</span>
           <button
+            className="quantity-button"
             onClick={(e) => handleInputChange(state[property] + 1, property)}
           >
             +
@@ -193,7 +202,7 @@ function App() {
                   Ações
                   <tr>
                     {state.columns.map((column, rowIndex) => (
-                      <th>
+                      <th key={`columns-${rowIndex}-${column}`}>
                         <input
                           type="text"
                           value={column}
@@ -209,10 +218,16 @@ function App() {
                     ))}
                   </tr>
                 </th>
-                <th colSpan={6}>
+                <th
+                  colSpan={state.goto.length}
+                  style={{ border: '1px solid black' }}
+                >
                   GoTo
                   {state.goto.map((column, rowIndex) => (
-                    <th style={{ maxWidth: 90 }}>
+                    <th
+                      style={{ maxWidth: 90 }}
+                      key={`goto-${rowIndex}-${column}`}
+                    >
                       <input
                         type="text"
                         value={column}
@@ -232,8 +247,11 @@ function App() {
             <tbody>
               {state.rows.map((row, rowIndex) => {
                 return (
-                  <tr>
-                    <td className="stateColumn">
+                  <tr key={`render-rows-${rowIndex}`}>
+                    <td
+                      className="stateColumn"
+                      key={`${rowIndex}-row-${rowIndex}`}
+                    >
                       <input
                         type="text"
                         value={state.statesValues[rowIndex]}
@@ -245,7 +263,14 @@ function App() {
                     </td>
                     {row.map((cell, columnIndex) => {
                       return (
-                        <td>
+                        <td
+                          key={`$column-${columnIndex}`}
+                          style={
+                            columnIndex === row.length - 1
+                              ? { borderRight: '1px solid black' }
+                              : {}
+                          }
+                        >
                           <input
                             type="text"
                             value={cell}
@@ -261,11 +286,19 @@ function App() {
                       );
                     })}
 
-                    {state.goToRows[rowIndex] &&
-                      state.goToRows[rowIndex]?.map((cell, columnIndex) => {
+                    {state.gotoRows[rowIndex] &&
+                      state.gotoRows[rowIndex]?.map((cell, columnIndex) => {
                         return (
-                          <td>
+                          <td
+                            key={`${rowIndex}-goto-${columnIndex}`}
+                            style={
+                              columnIndex === state.gotoQuantity - 1
+                                ? { borderRight: '1px solid black' }
+                                : {}
+                            }
+                          >
                             <input
+                              style={{ width: `10vh` }}
                               type="text"
                               value={cell}
                               onChange={(e) =>
@@ -285,22 +318,53 @@ function App() {
             </tbody>
           </table>
         </div>
-        <div>
-          <label>Quantidade de Regras de Produção</label>
-          <input
-            type="number"
-            value={state.productionQuantity}
-            onChange={(e) =>
-              handleInputChange(e.target.value, 'productionQuantity')
-            }
-          />
+        <div style={{ display: 'flex', flexWrap: 'wrap', maxWidth: `50vw` }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: `row`,
+              alignItems: 'center',
+            }}
+          >
+            <label>Quantidade de Regras de Produção</label>
+            <button
+              className="quantity-button"
+              onClick={(e) =>
+                handleInputChange(
+                  state[`productionQuantity`] - 1,
+                  `productionQuantity`
+                )
+              }
+            >
+              -
+            </button>
+
+            <span>{state[`productionQuantity`]}</span>
+            <button
+              className="quantity-button "
+              onClick={(e) =>
+                handleInputChange(
+                  state[`productionQuantity`] + 1,
+                  `productionQuantity`
+                )
+              }
+            >
+              +
+            </button>
+          </div>
           <p style={{ color: '#333', marginBottom: 16 }}>
             A -> é obrigatoria para gerar a regra, e utilize espaço para separar
             os simbolos
           </p>
           {state.productions.map((column, rowIndex) => (
             <input
-              style={{ margin: 4, borderBottom: '1px solid black' }}
+              placeholder="Regra"
+              key={`productions-${rowIndex}`}
+              style={{
+                margin: 4,
+                borderBottom: '1px solid black',
+                minWidth: 110,
+              }}
               type="text"
               value={column}
               onChange={(e) => {
@@ -308,6 +372,28 @@ function App() {
               }}
             />
           ))}
+        </div>
+        <div style={{ marginTop: 16 }}>
+          <label>Entrada para testar</label>
+          <p style={{ color: '#333', marginBottom: 16 }}>
+            Utilize espaço para separar os simbolos
+          </p>
+          <input
+            placeholder="Entrada"
+            value={state.entry}
+            onChange={(e) =>
+              dispatch({
+                type: 'changeEntryInput',
+                payload: { value: e.target.value },
+              })
+            }
+            style={{
+              margin: 4,
+              borderBottom: '1px solid black',
+              width: state.entry.length * 16,
+              minWidth: 110,
+            }}
+          />
         </div>
         <div className="resultContainer">
           <button className="convertButton" onClick={() => handleButtonClick()}>

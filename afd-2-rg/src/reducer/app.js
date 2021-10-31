@@ -8,7 +8,7 @@ export const reducer = (state, action) => {
   switch (type) {
     case 'changeStateInput':
       let auxRows = [...state.rows];
-      let auxGoToRows = [...state.goToRows];
+      let auxGoToRows = [...state.gotoRows];
       let auxStatesValues = [...state.statesValues];
 
       if (payloadValue > rowsLength) {
@@ -21,7 +21,7 @@ export const reducer = (state, action) => {
         }
       } else {
         auxRows = state.rows.filter((_, index) => index <= payloadValue - 1);
-        auxGoToRows = state.goToRows.filter(
+        auxGoToRows = state.gotoRows.filter(
           (_, index) => index <= payloadValue - 1
         );
         auxStatesValues = auxStatesValues.filter(
@@ -34,7 +34,7 @@ export const reducer = (state, action) => {
         ...state,
         states: payloadValue,
         rows: auxRows,
-        goToRows: auxGoToRows,
+        gotoRows: auxGoToRows,
         statesValues: auxStatesValues,
       };
     case 'changeActionsInput':
@@ -72,9 +72,9 @@ export const reducer = (state, action) => {
       };
     case 'changeGoToInput':
       let goToLength = state.goto.length;
-      auxRowArray = [...state.goToRows];
+      auxRowArray = [...state.gotoRows];
       let gotoValues = [...state.goto];
-
+      console.log(goToLength, payloadValue);
       if (payloadValue > state[payload.target]) {
         for (payloadValue; goToLength < payloadValue; goToLength++) {
           gotoValues.push('');
@@ -88,7 +88,7 @@ export const reducer = (state, action) => {
         }
       } else {
         for (let i = 0; i < state.states; i++) {
-          for (let j = state.goToRows.length; j >= payloadValue; j--) {
+          for (let j = state.gotoRows.length; j >= payloadValue; j--) {
             auxRowArray[i].splice(j, 1);
           }
         }
@@ -99,7 +99,7 @@ export const reducer = (state, action) => {
         ...state,
         gotoQuantity: payload.value,
         goto: gotoValues,
-        goToRows: auxRowArray,
+        gotoRows: auxRowArray,
       };
     case 'changeProductionInput':
       let productionsLength = state.productions.length;
@@ -140,7 +140,7 @@ export const reducer = (state, action) => {
     case 'changeGoToValue':
       return {
         ...state,
-        goToRows: state.goToRows.map((row, i) =>
+        gotoRows: state.gotoRows.map((row, i) =>
           row.map((cell, j) => {
             if (i === rowIndex && columnIndex === j) {
               return value;
@@ -170,13 +170,19 @@ export const reducer = (state, action) => {
     case 'changePropertyValue': {
       return {
         ...state,
-        columns: state[payload.property].map((value, i) => {
+        [payload.property]: state[payload.property].map((value, i) => {
           if (i === payload.index) {
             return payload.value;
           } else {
             return value;
           }
         }),
+      };
+    }
+    case `changeEntryInput`: {
+      return {
+        ...state,
+        entry: payload.value,
       };
     }
     case 'changeSymbol':

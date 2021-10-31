@@ -50,7 +50,7 @@ header {
   align-items: center;
 }
 
-.headerInputContainer > button {
+.quantity-button {
   padding: 14px;
   font-size: 34px;
   font-weight: 600;
