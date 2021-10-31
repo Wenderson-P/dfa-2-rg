@@ -2,7 +2,7 @@ import './App.css';
 
 import { useReducer } from 'react';
 import React from 'react';
-import parser from './converteAutomato';
+import parser from './parser.js';
 import { reducer } from './reducer/app';
 
 function App() {
@@ -101,7 +101,6 @@ function App() {
   const handleButtonClick = () => {
     const parsedProduction = state.productions.map((prod) => prod.split('->'));
     const parsedEntry = state.entry.split(` `);
-    console.log(parsedProduction);
     parser({
       quantidadeEstados: state.states,
       quantidadeProducoes: state.productionQuantity,
