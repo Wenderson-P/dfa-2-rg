@@ -59,7 +59,7 @@ const parser = ({
   // Execução do algoritmo
   const pilhaEstados = [0]; // pilha para armazenar estados
   const pilhaSimbolos = []; // pilha para armazenar simbolos
-
+  let htmlReturn = '';
   let verificar = true;
 
   while (verificar) {
@@ -128,11 +128,16 @@ const parser = ({
   }
 
   function printIteracao(tipo, entrada, estados, simbolos) {
-    console.log('*', tipo, '*');
-    console.log('Entrada:', entrada);
-    console.log('Pilha de estados:', estados);
-    console.log('Pilha de símbolos:', simbolos, '\n');
+    htmlReturn += `<h4>${tipo}</h4>`;
+    htmlReturn += `<div style="margin: 8px">
+    
+    <span>Entrada: ${entrada}</span>`;
+    htmlReturn += `<span style="padding:6px">Pilha de estados: ${estados}</span> `;
+    htmlReturn += `
+    <span>
+    Pilha de símbolos: ${simbolos} </span> </div>`;
   }
+  return htmlReturn;
 };
 
 export default parser;

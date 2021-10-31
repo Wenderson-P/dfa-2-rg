@@ -1,9 +1,10 @@
 import './App.css';
 
-import { useReducer } from 'react';
+import { useReducer, useRef } from 'react';
 import React from 'react';
 import parser from './parser.js';
 import { reducer } from './reducer/app';
+import { useState } from 'react';
 
 function App() {
   const INITIAL_STATE = {
@@ -59,8 +60,10 @@ function App() {
     entry: 'id * id $',
   };
 
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const responseRef = useRef(null);
 
+  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
+  const [parserResponse, setParserResponse] = useState(``);
   const handleInputChange = (value, target) => {
     if (value >= 1) {
       if (target === 'states') {
@@ -101,7 +104,7 @@ function App() {
   const handleButtonClick = () => {
     const parsedProduction = state.productions.map((prod) => prod.split('->'));
     const parsedEntry = state.entry.split(` `);
-    parser({
+    let response = parser({
       quantidadeEstados: state.states,
       quantidadeProducoes: state.productionQuantity,
       simbolos: state.columns,
@@ -111,6 +114,11 @@ function App() {
       goto: state.gotoRows,
       entrada: parsedEntry,
     });
+    setParserResponse(`<div style="margin-bottom: 16px">
+    <h2 style="margin-bottom:8px">Logs</h2>
+      ${response}
+    </div>`);
+    responseRef.current.scrollIntoView({ behavior: 'smooth' });
     // dispatch({ type: 'changeAutomato', payload: automato });
 
     //let grammar = afdToGr(estadoInicial, estadosFinais, automato);
@@ -398,17 +406,11 @@ function App() {
           <button className="convertButton" onClick={() => handleButtonClick()}>
             Parsear
           </button>
-
-          {state.grammar && (
-            <div className="resultContainer">
-              <h3>Gramática:</h3>
-              {printItems('variaveis')}
-              {printItems('terminais')}
-              {printItems('producoes')}
-              {printItems('variavelInicial', false)}
-            </div>
-          )}
         </div>
+        <div
+          ref={responseRef}
+          dangerouslySetInnerHTML={{ __html: parserResponse }}
+        />
       </main>
     </div>
   );
